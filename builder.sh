@@ -33,6 +33,9 @@ if [ -f zip/boot.img ]; then
 			echo "  CLEAN zip"
 			rm -rf zip/boot.img
 			rm -rf arch/arm/boot/"$kerneltype"
+			rm -rf zip/system
+			mkdir -p zip/system/lib/modules
+
 			make clean && make mrproper
 			echo "Working directory cleaned...";;
 		n|N )
@@ -65,7 +68,9 @@ else
                         echo "  CLEAN zip"
                         rm -rf zip/boot.img
                         rm -rf arch/arm/boot/"$kerneltype"
-			            make clean && make mrproper
+			rm -rf zip/system
+                        mkdir -p zip/system/lib/modules
+                        make clean && make mrproper
                         echo "Working directory cleaned...";;
 		n|N )
 			exit 0;;
@@ -111,7 +116,7 @@ echo "Zipping..."
 if [ -f arch/arm/boot/"$kerneltype" ]; then
 	cd zip
 	zip -r ../"$kernel"."$version"-"$rom"."$vendor"."$device"."$date".zip .
-        mv ../"$kernel"."$version"-"$rom"."$vendor"."$device"."$date".zip $build
+	mv ../"$kernel"."$version"-"$rom"."$vendor"."$device"."$date".zip $build
 	cd ..
 	echo "Done..."
 	exit 0;
