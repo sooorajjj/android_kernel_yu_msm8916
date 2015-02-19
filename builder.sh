@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "Welcome to Treako-Kang Kernel Project!"
 LC_ALL=C date +%Y-%m-%d
-toolchain="/root/Treako/toolchains/arm-cortex_a15-linux-gnueabihf-linaro_4.9.1-2014.04/bin/arm-gnueabi-"
+toolchain=~/Desktop/Toolchain[gcc4.8]/arm-eabi-4.8/bin/arm-eabi-
 build=/root/Treako/out/tomato
 kernel="Treako"
 version="R1"
