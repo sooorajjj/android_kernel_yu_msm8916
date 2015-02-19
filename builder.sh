@@ -1,24 +1,24 @@
 #!/bin/bash
-echo "Welcome to Velvet Kernel Builder!"
+echo "Welcome to Treako-Kang Kernel Project!"
 LC_ALL=C date +%Y-%m-%d
-toolchain="/root/velvet/toolchains/arm-cortex_a15-linux-gnueabihf-linaro_4.9.1-2014.04/bin/arm-gnueabi-"
-build=/root/out
-kernel="velvet"
-version=".R1"
+toolchain="/root/Treako/toolchains/arm-cortex_a15-linux-gnueabihf-linaro_4.9.1-2014.04/bin/arm-gnueabi-"
+build=/root/Treako/out/tomato
+kernel="Treako"
+version="R1"
 rom="cm"
 vendor="yu"
 device="tomato"
 date=`date +%Y%m%d`
 ramdisk=ramdisk
-config="tomato_defconfig"
+config=tomato_defconfig
 kerneltype="zImage"
-jobcount="-j$(grep -c ^processor /proc/cpuinfo)"
-ps=2048
 base=0x80000000
 ramdisk_offset=0x01000000
+pagesize=2048
 cmdline="androidboot.console=ttyHSL0 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci sched_enable_hmp=1"
-export KBUILD_USER=arnavgosain
-export KBUILD_HOST=velvet
+jobcount="-j$(grep -c ^processor /proc/cpuinfo)"
+export KBUILD_USER=sooorajjj
+export KBUILD_HOST=Treako
 
 rm -rf out
 mkdir out
@@ -33,8 +33,6 @@ if [ -f zip/boot.img ]; then
 			echo "  CLEAN zip"
 			rm -rf zip/boot.img
 			rm -rf arch/arm/boot/"$kerneltype"
-			rm -rf zip/system
-			mkdir -p zip/system/lib/modules
 			make clean && make mrproper
 			echo "Working directory cleaned...";;
 		n|N )
@@ -67,9 +65,7 @@ else
                         echo "  CLEAN zip"
                         rm -rf zip/boot.img
                         rm -rf arch/arm/boot/"$kerneltype"
-			rm -rf zip/system
-                        mkdir -p zip/system/lib/modules
-                        make clean && make mrproper
+			            make clean && make mrproper
                         echo "Working directory cleaned...";;
 		n|N )
 			exit 0;;
@@ -102,17 +98,20 @@ echo "Making dt.img..."
 
 echo "Making boot.img..."
 if [ -f out/"$kerneltype" ]; then
-	boot_tools/mkbootimg --kernel out/"$kerneltype" --ramdisk out/ramdisk.gz --dt out/dt.img --cmdline $cmdline --base $base --pagesize $ps --ramdisk_offset $ramdisk_offset --output zip/boot.img
+	./boot_tools/mkbootimg --base 0x80000000 --kernel out/zImage --ramdisk_offset 0x01000000 --cmdline "androidboot.console=ttyHSL0 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci sched_enable_hmp=1" --ramdisk out/ramdisk.gz --dt out/dt.img -o out/boot.img
 else
 	echo "No $kerneltype found..."
 	exit 0;
 fi
 
+echo "Copying boot.img to out dir..."
+cp out/boot.img zip
+
 echo "Zipping..."
 if [ -f arch/arm/boot/"$kerneltype" ]; then
 	cd zip
-	zip -r ../"$kernel"-$version-"$rom"_"$vendor"_"$device"_"$date".zip .
-	mv ../"$kernel"-$version-"$rom"_"$vendor"_"$device"_"$date".zip $build
+	zip -r ../"$kernel"."$version"-"$rom"."$vendor"."$device"."$date".zip .
+        mv ../"$kernel"."$version"-"$rom"."$vendor"."$device"."$date".zip $build
 	cd ..
 	echo "Done..."
 	exit 0;
